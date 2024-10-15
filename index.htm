@@ -1,0 +1,114 @@
+<div class="container">
+    <header>
+        <h1>AI Prompt Examples</h1>
+    </header>
+
+    <!-- Dropdown for Act As -->
+    <div class="dropdown">
+        <label for="actAs">Act As:</label>
+        <select id="actAs">
+            <option value="copywriter">Copywriter</option>
+            <option value="social-media-expert">Social Media Expert</option>
+            <option value="seo-expert">SEO Expert</option>
+            <option value="cybersecurity-expert">Cybersecurity Expert</option>
+        </select>
+    </div>
+
+    <!-- Input field for product/service -->
+    <div class="input-field">
+        <label for="productInput">Enter the product or service:</label>
+        <input type="text" id="productInput" placeholder="e.g., smartwatch, cloud security, bakery website">
+    </div>
+
+    <!-- Prompts Display -->
+    <div class="prompt-category" id="prompts-container">
+        <!-- Prompts will dynamically change based on dropdown selection -->
+    </div>
+</div>
+
+<script type="text/javascript">
+    // Example prompts for each "Act As" role
+    const prompts = {
+        copywriter: [
+            "Write a compelling product description for {product}.",
+            "Create a headline for a blog post on {product}."
+        ],
+        "social-media-expert": [
+            "Craft a tweet to promote {product}.",
+            "Write an Instagram caption for {product}."
+        ],
+        "seo-expert": [
+            "Optimize a blog post about {product} for search engines.",
+            "Suggest five keywords to target for {product}."
+        ],
+        "cybersecurity-expert": [
+            "Explain how {product} can improve company security.",
+            "List three ways {product} can secure sensitive data in cloud environments."
+        ]
+    };
+
+    // Role names for insertion into prompt text
+    const roleNames = {
+        copywriter: "Copywriter",
+        "social-media-expert": "Social Media Expert",
+        "seo-expert": "SEO Expert",
+        "cybersecurity-expert": "Cybersecurity Expert"
+    };
+
+    // Function to display prompts based on the selected role and product/service
+    function displayPrompts(role, product) {
+        const promptsContainer = document.getElementById('prompts-container');
+        promptsContainer.innerHTML = ''; // Clear previous prompts
+        const roleName = roleNames[role]; // Get the readable role name
+
+        if (!product) {
+            alert('Please enter a product or service.');
+            return;
+        }
+
+        prompts[role].forEach(prompt => {
+            const formattedPrompt = prompt.replace('{product}', product); // Insert product/service into the prompt
+            
+            const promptDiv = document.createElement('div');
+            promptDiv.classList.add('prompt');
+            
+            const promptText = document.createElement('p');
+            promptText.classList.add('prompt-text');
+            promptText.textContent = `"Act as a ${roleName} and ${formattedPrompt}"`;
+            
+            const copyButton = document.createElement('button');
+            copyButton.classList.add('copy-btn');
+            copyButton.textContent = 'Copy Prompt';
+            copyButton.addEventListener('click', () => {
+                const fullPrompt = `Act as a ${roleName} and ${formattedPrompt}`;
+                navigator.clipboard.writeText(fullPrompt)
+                    .then(() => alert('Prompt copied to clipboard!'))
+                    .catch(err => console.log('Failed to copy text: ', err));
+            });
+            
+            promptDiv.appendChild(promptText);
+            promptDiv.appendChild(copyButton);
+            promptsContainer.appendChild(promptDiv);
+        });
+    }
+
+    // Event listener for dropdown and product input
+    document.getElementById('actAs').addEventListener('change', function() {
+        const selectedRole = this.value;
+        const product = document.getElementById('productInput').value;
+        displayPrompts(selectedRole, product);
+    });
+
+    // Event listener for product input change
+    document.getElementById('productInput').addEventListener('input', function() {
+        const selectedRole = document.getElementById('actAs').value;
+        const product = this.value;
+        displayPrompts(selectedRole, product);
+    });
+
+    // Initial load (default to 'copywriter')
+    window.onload = function() {
+        const product = document.getElementById('productInput').value;
+        displayPrompts('copywriter', product);
+    };
+</script>
